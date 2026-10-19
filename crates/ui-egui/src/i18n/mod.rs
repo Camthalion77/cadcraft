@@ -41,10 +41,14 @@ pub enum Preference {
     Swedish,
     #[serde(rename = "ar")]
     Arabic,
+    #[serde(rename = "hu")]
+    Hungarian,
+    #[serde(rename = "tr")]
+    Turkish,
 }
 
 impl Preference {
-    pub const ALL: [Self; 15] = [
+    pub const ALL: [Self; 17] = [
         Self::Auto,
         Self::English,
         Self::Greek,
@@ -60,6 +64,8 @@ impl Preference {
         Self::Korean,
         Self::Swedish,
         Self::Arabic,
+        Self::Hungarian,
+        Self::Turkish,
     ];
 
     /// The codes a preference can be given as, for messages ("auto, en or uk").
@@ -88,6 +94,8 @@ impl Preference {
             Self::Korean => "ko",
             Self::Swedish => "sv",
             Self::Arabic => "ar",
+            Self::Hungarian => "hu",
+            Self::Turkish => "tr",
         }
     }
 
@@ -114,6 +122,8 @@ impl Preference {
             }
             Self::Swedish => "Svenska",
             Self::Arabic => "العربية",
+            Self::Hungarian => "Magyar",
+            Self::Turkish => "Türkçe",
         }
     }
 
@@ -142,6 +152,8 @@ impl Preference {
             Self::Korean => "ko",
             Self::Swedish => "sv",
             Self::Arabic => "ar",
+            Self::Hungarian => "hu",
+            Self::Turkish => "tr",
             Self::Auto => locales.iter().find_map(|s| locale_language(s)).unwrap_or("en"),
         }
     }
@@ -158,7 +170,7 @@ pub struct Language {
     catalog: OnceLock<Catalog<'static>>,
 }
 
-pub static LANGUAGES: [Language; 14] = [
+pub static LANGUAGES: [Language; 16] = [
     Language { code: "en", name: "English", source: "", plural: plural_en, plural_forms: 2, catalog: OnceLock::new() },
     // Greek: one for exactly 1; other for zero and all other integer counts.
     Language { code: "el", name: "Ελληνικά", source: include_str!("el.tsv"), plural: plural_en, plural_forms: 2, catalog: OnceLock::new() },
@@ -195,6 +207,10 @@ pub static LANGUAGES: [Language; 14] = [
     // covers its glyphs, and the shell keeps egui's left-to-right run order. Six plural
     // forms: zero, one, two, few, many, other.
     Language { code: "ar", name: "العربية", source: include_str!("ar.tsv"), plural: plural_arabic, plural_forms: 6, catalog: OnceLock::new() },
+    // Hungarian uses the singular after a numeral, so one form covers every count (the Korean rule).
+    Language { code: "hu", name: "Magyar", source: include_str!("hu.tsv"), plural: plural_ko, plural_forms: 1, catalog: OnceLock::new() },
+    // Turkish keeps a noun singular after a number ("3 commit"), so like Korean it has one form.
+    Language { code: "tr", name: "Türkçe", source: include_str!("tr.tsv"), plural: plural_ko, plural_forms: 1, catalog: OnceLock::new() },
 ];
 
 /// BCP 47 and POSIX locale tags, including `uk-UA`, `uk_UA.UTF-8` and `pt_BR.UTF-8`.
